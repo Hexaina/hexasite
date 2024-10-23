@@ -1,7 +1,15 @@
 <!DOCTYPE html>
 <head>
 <script>
+let hexes = 0;
 
+function hexclick(){
+  hexes++
+}
+
+setInterval(function(){
+  document.getElementById("hexesText").innerHTML = hexes;
+}, 6)
 </script>
 
 <style>
@@ -17,6 +25,16 @@ h1 {
 }
 small {
   color: #FFC5FC;
+}
+button {
+  background-color: #C157FF;
+  color: #942395;
+  border-color: #FC36FF;
+  border-style: solid;
+  border-radius: 6px;
+}
+button:active {
+  border-color: #AA48AD;
 }
 td {
   text-align: center;
@@ -38,6 +56,8 @@ table, th, td {
 <p>im silly person on the internet, i do coding and computors, i draw some stuff, and i hope to make music in the future</p> <br>
 socials: <a href="https://www.youtube.com/channel/UC8ZB4SMu3dWNS89tw0v7_dQ">Youtube</a> <a href="https://www.pinterest.com/hexaares/">pintrest</a> <a>bluesky?</a> <br>
 <a href="https://sites.google.com/view/hexaina-games/home">Games!</a> <br>
-<a href="">bolg/rants (not working)</a>
+<a href="">bolg/rants (not working)</a> <br>
+
+<p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
 <!random info: >
 </body>
