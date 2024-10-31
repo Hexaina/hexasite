@@ -1,0 +1,64 @@
+<!DOCTYPE html>
+<head>
+<script>
+let hexes = 0;
+
+function hexclick(){
+  hexes++
+}
+
+setInterval(function(){
+  document.getElementById("hexesText").innerHTML = hexes;
+}, 6)
+</script>
+
+<style>
+body {
+  background-color: #41024A;
+  color: #F722E4;
+}
+a {
+  color: #0074FF;
+}
+h1 {
+  color: #AA00FF;
+}
+small {
+  color: #FFC5FC;
+}
+button {
+  background-color: #C157FF;
+  color: #942395;
+  border-color: #FC36FF;
+  border-style: solid;
+  border-radius: 6px;
+}
+button:active {
+  border-color: #AA48AD;
+}
+td {
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Museum</h1>
+<a>BACK</a>
+here ill put some old images. this will hapen over time as i deside to take pictures. many of these will have low resolution though<br>
+
+<p>
+a sketch of wind! <small>made with krita</small><br>
+<img src="wind.jpg" alt="image failed to load" width="194" height="480"></p>
+
+<p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
+<!random info: >
+</body>
