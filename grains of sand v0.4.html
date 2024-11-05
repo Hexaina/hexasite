@@ -1,0 +1,851 @@
+<!DOCTYPE html>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>grains of sand v0.4</title>
+    <script>
+//variables
+//resources
+let sand = 0;
+let wood = 0;
+let stone = 0;
+let copperBits = 0;
+let copperChuncks = 0;
+let copperBars =0;
+let silicon = 0;
+let circuitBoard = 0;
+let copperWire = 0;
+let alluminumBits = 0;
+let alluminumChuncks = 0;
+let bronzeBars = 0;
+//stage
+let stage = 0;
+//power
+let power = 0;
+
+//functions
+//utility functions
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+//action functions
+function collectSand() {
+  sand += 1;
+}
+function siftForWood(){
+    if (sand >= 2){
+        sand -= 2;
+        wood += 1;
+    }
+}
+function siftForStone(){
+    if (sand >= 2){
+        sand -= 2;
+        stone += 1;
+    }
+}
+function siftForCopper(){
+    if (sand >= 5 && stage >= 1){
+        sand -= 5;
+    	copperBits += 1;
+    }
+}
+function craftCircuitBoard(){
+    if (silicon >= 3 && copperBars >= 1){
+        silicon -= 3;
+        copperBars -= 1;
+        circuitBoard += 1;
+    }
+}
+function craftCopperWire(){
+	if (copperBars >= 2 && stage >= 2){
+		copperBars -= 2;
+		copperWire += 20;
+	}
+}
+function siftForAlluminum(){
+    if (sand >= 10 && stage >= 3){
+        sand -= 10;
+    	alluminumBits += 1;
+    }
+}
+//building obgects
+
+furnace = {
+    ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+    boosted: false,
+    build: function(){
+        if (stage >= 1 && stone >= 10){
+            stone -= 10;
+            furnace.ammount++
+        } //end of if
+    }, //end of function
+    produce: function(){
+        let sets = Math.floor(copperBits / 5);
+        let conversions = Math.min(sets, furnace.numberWorking);
+        copperChuncks += (conversions * furnace.productivity);
+        copperBits -= conversions * 5;
+        //chat gpt code lmao
+    }, //end of function
+    turnOn: function(){
+        if (furnace.numberWorking < furnace.ammount){
+            furnace.numberWorking++;
+        }
+    },
+    turnOff: function(){
+        if (furnace.numberWorking > 0) {
+            furnace.numberWorking--;
+        }
+    },
+    boost: function(){
+        if (wood >= 5 && furnace.boosted == false){
+            wood -= 5
+            furnace.boosted = true
+            furnace.productivity++
+            wait(10000).then(() => {
+                furnace.boosted = false
+                furnace.productivity--
+            })
+        }
+    },
+} //end of obgect
+copperFurnace = {
+    ammount: 0,
+    productivity: 1,
+    numberWorkingOnBars: 0,
+    numberWorkingOnSilicon: 0,
+    boosted: false,
+    build: function(){
+        if (stage >= 1 && stone >= 10 && copperChuncks >= 2){
+            stone -= 10;
+            copperChuncks -= 2;
+            copperFurnace.ammount++;
+        }
+    },
+    produceCopperBar: function(){
+        let sets = Math.floor(copperChuncks / 2);
+        let conversions = Math.min(sets, copperFurnace.numberWorkingOnBars);
+        copperBars += (conversions * copperFurnace.productivity);
+        copperChuncks -= conversions * 2;
+    },
+    produceSilicon: function(){
+        let sets = Math.floor(sand / 20);
+        let conversions = Math.min(sets, copperFurnace.numberWorkingOnSilicon);
+        silicon += (conversions * copperFurnace.productivity);
+        sand -= conversions * 20;
+    },
+    turnOnBars: function(){
+        if (copperFurnace.numberWorkingOnBars + copperFurnace.numberWorkingOnSilicon < copperFurnace.ammount) {
+            copperFurnace.numberWorkingOnBars++;
+        }
+    },
+    turnOffBars: function(){
+        if (copperFurnace.numberWorkingOnBars > 0) {
+            copperFurnace.numberWorkingOnBars--;
+        }
+    },
+    turnOnSilicon: function(){
+        if (copperFurnace.numberWorkingOnBars + copperFurnace.numberWorkingOnSilicon < copperFurnace.ammount) {
+            copperFurnace.numberWorkingOnSilicon++;
+        }
+    },
+    turnOffSilicon: function(){
+        if (copperFurnace.numberWorkingOnSilicon > 0) {
+            copperFurnace.numberWorkingOnSilicon--;
+        }
+    },
+    boost: function(){
+        if (wood >= 5 && copperFurnace.boosted == false){
+            wood -= 5
+            copperFurnace.boosted = true
+            copperFurnace.productivity++
+            wait(10000).then(() => {
+                copperFurnace.boosted = false
+                copperFurnace.productivity--
+            })
+        }
+    },
+}
+AlluFurnace = {
+    ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+    boosted: false,
+    build: function(){
+        if (stage >= 1 && copperBars >= 10){
+            copperBars -= 10;
+            AlluFurnace.ammount++
+        } //end of if
+    }, //end of function
+    produce: function(){
+        let sets = Math.floor(alluminumBits / 5);
+        let conversions = Math.min(sets, AlluFurnace.numberWorking);
+        alluminumChuncks += (conversions * AlluFurnace.productivity);
+        alluminumBits -= conversions * 5;
+        //chat gpt code lmao
+    }, //end of function
+    turnOn: function(){
+        if (AlluFurnace.numberWorking < AlluFurnace.ammount) {
+            AlluFurnace.numberWorking++;
+        }
+	},
+    turnOff: function(){
+        if (AlluFurnace.numberWorking > 0) {
+            AlluFurnace.numberWorking--;
+        }
+    },
+    boost: function(){
+        if (wood >= 10 && AlluFurnace.boosted == false){
+            wood -= 10
+            AlluFurnace.boosted = true
+            AlluFurnace.productivity++
+            wait(10000).then(() => {
+                AlluFurnace.boosted = false
+                AlluFurnace.productivity--
+            })
+        }
+    },
+} //end of obgect
+alloyFurnace = {
+    ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+    boosted: false,
+    build: function(){
+        if (stage >= 1 && copperBars >= 12 && alluminumChuncks >= 6 && stone >= 12){
+            stone -= 12;
+            copperBars -= 12;
+            alluminumChuncks -= 6;
+            alloyFurnace.ammount++;
+        } 
+    },
+    produce: function() {
+    // Only produce if there are alloy furnaces built and at least one is working
+    if (this.ammount > 0 && this.numberWorking > 0) {
+        let setsAlluminum = Math.floor(alluminumChuncks / 1);
+        let setsCopper = Math.floor(copperChuncks / 2);
+        let conversions = Math.min(setsAlluminum, setsCopper, this.numberWorking);
+
+        if (conversions > 0) {
+            alluminumChuncks -= conversions * 1;  
+            copperChuncks -= conversions * 2;     
+            bronzeBars += conversions * this.productivity;  
+        }
+    }
+},
+
+    turnOn: function(){
+        if (alloyFurnace.numberWorking < alloyFurnace.ammount) {
+            alloyFurnace.numberWorking++;
+        }
+    },
+    turnOff: function(){
+        if (alloyFurnace.numberWorking > 0) {
+            alloyFurnace.numberWorking--;
+        }
+    },
+    boost: function(){
+        if (wood >= 10 && alloyFurnace.boosted == false){
+            wood -= 10;
+            alloyFurnace.boosted = true;
+            alloyFurnace.productivity++;
+            setTimeout(() => {
+                alloyFurnace.boosted = false;
+                alloyFurnace.productivity--;
+            }, 10000);
+        }
+    }
+}//end of obgect
+//power buildings
+sandCollector = {
+	ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+	build: function(){
+		if (circuitBoard >= 2 && copperBars >= 3 && copperWire >= 10){
+			circuitBoard -= 2;
+			copperBars -= 3;
+			copperWire -= 10;
+			sandCollector.ammount++;
+		}
+	},
+	produce: function(){
+		if (checkPowerConsumers() <= power){
+			sand += (sandCollector.numberWorking * 2)
+		}
+	},
+	turnOn: function(){
+        if (sandCollector.numberWorking < sandCollector.ammount) {
+            sandCollector.numberWorking++;
+        }
+	},
+	turnOff: function(){
+        if (sandCollector.numberWorking > 0) {
+            sandCollector.numberWorking--;
+        }
+    },
+}
+autoSifterWood = {
+	ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+	build: function(){
+		if (circuitBoard >= 2 && alluminumChuncks >= 3 && copperWire >= 30){
+			circuitBoard -= 2;
+			alluminumChuncks -= 3;
+			copperWire -= 30;
+			autoSifterWood.ammount++;
+		}
+	},
+	produce: function(){
+		if (checkPowerConsumers() <= power && sand >= autoSifterWood.numberWorking * 2){
+			sand -= (autoSifterWood.numberWorking * 2)
+			wood += (autoSifterWood.numberWorking)
+		}
+	},
+	turnOn: function(){
+        if (autoSifterWood.numberWorking < autoSifterWood.ammount) {
+            autoSifterWood.numberWorking++;
+        }
+	},
+	turnOff: function(){
+        if (autoSifterWood.numberWorking > 0) {
+            autoSifterWood.numberWorking--;
+        }
+    },
+}
+autoSifterStone = {
+	ammount: 0,
+    productivity: 1,
+    numberWorking: 0,
+	build: function(){
+		if (circuitBoard >= 2 && alluminumChuncks >= 3 && copperWire >= 30){
+			circuitBoard -= 2;
+			alluminumChuncks -= 3;
+			copperWire -= 30;
+			autoSifterStone.ammount++;
+		}
+	},
+	produce: function(){
+		if (checkPowerConsumers() <= power && sand >= autoSifterStone.numberWorking * 2){
+			sand -= (autoSifterStone.numberWorking * 2)
+			stone += (autoSifterStone.numberWorking)
+		}
+	},
+	turnOn: function(){
+        if (autoSifterStone.numberWorking < autoSifterStone.ammount) {
+            autoSifterStone.numberWorking++;
+        }
+	},
+	turnOff: function(){
+        if (autoSifterStone.numberWorking > 0) {
+            autoSifterStone.numberWorking--;
+        }
+    },
+}
+//power
+waterWeel = {
+	ammount: 0,
+	productivity: 1,
+	build: function(){
+		if (wood >= 20 && stone >= 15 && copperBars >= 1){
+			wood -= 20;
+			stone -= 15;
+			copperBars -= 1
+			waterWeel.ammount++
+		}
+	},
+	power: function(){
+		return ((waterWeel.ammount * 10) * waterWeel.productivity);
+	},
+} //end of water weel
+bioBurner = {
+	ammount: 0,
+	productivity: 1,
+	numberTurnedOn: 0,
+	numberWorking: 0,
+	build: function(){
+		if (stone >= 25 && copperBars >= 5){
+			stone -= 25;
+			copperBars -= 5;
+			bioBurner.ammount++
+		}
+	},
+	power: function(){
+		return ((bioBurner.numberWorking * 20) * bioBurner.productivity);
+	},
+	burn: function() {
+        if (wood >= (bioBurner.numberTurnedOn * 5)) {
+            wood -= (bioBurner.numberTurnedOn * 5);
+            bioBurner.numberWorking = bioBurner.numberTurnedOn;  // Set working to turned on if there's enough wood
+        } else {
+            bioBurner.numberWorking = Math.floor(wood / 5);  // Set to max possible working based on available wood
+            wood -= (bioBurner.numberWorking * 5);  // Burn what wood is available
+        }
+    },
+	turnOn: function() {
+        if (bioBurner.numberTurnedOn < bioBurner.ammount) {
+            bioBurner.numberTurnedOn++;
+        }
+    },
+	turnOff: function() {
+        if (bioBurner.numberTurnedOn > 0) {
+            bioBurner.numberTurnedOn--;
+        }
+    },
+}
+function calculatePower(){
+	power = waterWeel.power() + bioBurner.power();
+}
+function checkPowerConsumers(){
+	return (sandCollector.numberWorking * 5) + (autoSifterWood.numberWorking * 10)
+}
+//invention functions
+function crudeSifterUpgrade(){
+	if (wood >= 5 && stage == 0){
+    	wood = wood - 5;
+    	stage = 1;
+    }
+}
+function castingStationUpgrade(){
+	if (stage == 1 && stone >= 30 && silicon >= 20){
+		stone -= 30;
+		silicon -= 20;
+		stage = 2;
+	}
+}
+function granularSifterUpgrade(){
+	if (stage == 2 && copperWire >= 40 && stone >= 5 && wood >= 10){
+		stone -= 5;
+		wood -= 20;
+		copperWire -= 40;
+		stage = 3;
+	}
+}
+function tempWinState(){
+    if (bronzeBars >= 20 && circuitBoard >= 5 && copperWire >= 100){
+        bronzeBars -= 20;
+        circuitBoard -= 5;
+        copperWire -= 100;
+		document.getElementById("winText").innerHTML = "YOU WIN!!!!!! GG";
+        stage = 999;
+    }
+}
+function gimme(){
+    sand = 10000;
+    stone = 10000;
+    wood = 10000;
+    copperBits = 10000;
+    copperChuncks = 10000;
+    copperBars = 10000;
+    silicon = 10000;
+    circuitBoard = 10000;
+	copperWire = 10000;
+	alluminumBits = 10000;
+	alluminumChuncks = 10000;
+	alluminumBars = 10000;
+	bronzeBars = 10000
+    stage = 3;
+    console.log("cheater lmao")
+}
+function buiild(){
+    furnace.ammount = 5;
+    copperFurnace.ammount = 5;
+}
+//time loops
+//ten seconds
+setInterval(function (){
+	bioBurner.burn();
+}, 10000)
+//one second
+setInterval(function (){
+	furnace.produce()
+    copperFurnace.produceCopperBar()
+    copperFurnace.produceSilicon()
+	AlluFurnace.produce()
+	sandCollector.produce()
+	autoSifterWood.produce()
+	autoSifterStone.produce()
+	alloyFurnace.produce()
+}, 1000)
+//constant update loop
+document.addEventListener("DOMContentLoaded", function() {
+    setInterval(function (){
+    document.getElementById("sandText").innerHTML = sand;
+    document.getElementById("woodText").innerHTML = wood;
+    document.getElementById("stoneText").innerHTML = stone;
+    document.getElementById("copperBitsText").innerHTML = copperBits;
+    document.getElementById("copperChunckText").innerHTML = copperChuncks;
+    document.getElementById("furnaceAmmountText").innerHTML = furnace.ammount;
+    document.getElementById("furnaceProductivityText").innerHTML = furnace.numberWorking;
+    document.getElementById("furnaceAmmmountOnText").innerHTML = furnace.numberWorking;
+    document.getElementById("furnaceBoostText").innerHTML = furnace.productivity;
+    document.getElementById("copperBarText").innerHTML = copperBars;
+    document.getElementById("siliconText").innerHTML = silicon;
+    document.getElementById("circuitBoardText").innerHTML = circuitBoard;
+    document.getElementById("copperFurnaceAmmountText").innerHTML = copperFurnace.ammount;
+    document.getElementById("copperFurnaceBarsProductivityText").innerHTML = copperFurnace.numberWorkingOnBars;
+    document.getElementById("copperFurnaceSiliconProductivityText").innerHTML = copperFurnace.numberWorkingOnSilicon;
+    document.getElementById("copperFurnaceBoostText").innerHTML = copperFurnace.productivity;
+    document.getElementById("copperFurnaceAmmmountOnBarsText").innerHTML = copperFurnace.numberWorkingOnBars;
+    document.getElementById("copperFurnaceAmmmountOnSiliconText").innerHTML = copperFurnace.numberWorkingOnSilicon;
+	document.getElementById("totalPowerText").innerHTML = power;
+	document.getElementById("copperWireText").innerHTML = copperWire;
+	document.getElementById("AlluFurnaceAmmountText").innerHTML = AlluFurnace.ammount;
+	document.getElementById("AlluFurnaceProductivityText").innerHTML = AlluFurnace.numberWorking;
+	document.getElementById("AlluFurnaceAmmmountOnText").innerHTML = AlluFurnace.numberWorking;
+	document.getElementById("AlluFurnaceConsumptionText").innerHTML = autoSifterWood.numberWorking * 5;
+	document.getElementById("alluminumBitsText").innerHTML = alluminumBits;
+	document.getElementById("alluminumChuncksText").innerHTML = alluminumChuncks;
+	document.getElementById("bronzeBarsText").innerHTML = bronzeBars;
+	document.getElementById("sandCollectorAmmountText").innerHTML = sandCollector.ammount;
+	document.getElementById("sandCollectorProductivityText").innerHTML = sandCollector.numberWorking * 2;
+	document.getElementById("sandCollectorConsumptionText").innerHTML = sandCollector.numberWorking * 5;
+	document.getElementById("sandCollectorBoostText").innerHTML = sandCollector.productivity;
+	document.getElementById("sandCollectorAmmmountOnText").innerHTML = sandCollector.numberWorking;
+	document.getElementById("powerLossText").innerHTML = checkPowerConsumers();
+	document.getElementById("autoSifterWoodAmmountText").innerHTML = autoSifterWood.ammount;
+	document.getElementById("autoSifterWoodProductivityText").innerHTML = autoSifterWood.numberWorking * 1;
+	document.getElementById("autoSifterWoodConsumptionText").innerHTML = autoSifterWood.numberWorking * 10;
+	document.getElementById("autoSifterWoodBoostText").innerHTML = autoSifterWood.productivity;
+	document.getElementById("autoSifterWoodAmmmountOnText").innerHTML = autoSifterWood.numberWorking;
+	document.getElementById("autoSifterWoodConsumptionText2").innerHTML = autoSifterWood.numberWorking * 2;
+	document.getElementById("copperFurnaceBarsConsumptionText").innerHTML = copperFurnace.numberWorkingOnBars * 10;
+	document.getElementById("copperFurnaceSiliconConsumptionText").innerHTML = copperFurnace.numberWorkingOnSilicon * 20;
+	document.getElementById("furnaceConsumptionText").innerHTML = furnace.numberWorking * 5;
+	document.getElementById("autoSifterStoneAmmmountOnText").innerHTML = autoSifterStone.numberWorking;
+	document.getElementById("alloyFurnaceAmmmountOnText").innerHTML = alloyFurnace.numberWorking;
+	document.getElementById("autoSifterStoneAmmountText").innerHTML = autoSifterStone.ammount;
+	document.getElementById("autoSifterStoneProductivityText").innerHTML = autoSifterStone.numberWorking;
+	document.getElementById("autoSifterStoneConsumptionText").innerHTML = autoSifterStone.numberWorking * 10;
+	document.getElementById("autoSifterStoneConsumptionText2").innerHTML = autoSifterStone.numberWorking * 2;
+	document.getElementById("autoSifterStoneBoostText").innerHTML = autoSifterStone.productivity;
+	document.getElementById("AlluFurnaceBoostText").innerHTML = AlluFurnace.productivity;
+	document.getElementById("alloyFurnaceAmmountText").innerHTML = alloyFurnace.ammount;
+	document.getElementById("alloyFurnaceProductivityText").innerHTML = alloyFurnace.numberWorking;
+	document.getElementById("alloyFurnaceCopperConsumptionText").innerHTML = alloyFurnace.numberWorking * 2;
+	document.getElementById("alloyFurnaceAlluminumConsumptionText").innerHTML = alloyFurnace.numberWorking;
+	document.getElementById("alloyFurnaceBoostText").innerHTML = alloyFurnace.productivity;
+	calculatePower()
+}, 5)
+});
+    </script>
+
+
+    
+    <style>
+td {
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+    </style>
+</head>
+
+
+
+<body>
+    <div id="app">
+        <!--//variable text-->
+sand: <span id="sandText">
+  0
+</span> <br>
+wood: <span id="woodText">
+  0
+</span> <br>
+stone: <span id="stoneText">
+  0
+</span> <br>
+copper bits: <span id="copperBitsText">
+  0
+</span> <!--tab---> &nbsp;&nbsp;
+copper chuncks: <span id="copperChunckText">
+  0
+</span> <!--tab---> &nbsp;&nbsp;
+copper bars: <span id="copperBarText">
+  0
+</span> <br>
+silicon: <span id="siliconText">
+  0
+</span> <br>
+circuit boards: <span id="circuitBoardText">
+  0
+</span> <br>
+copper wire: <span id="copperWireText">
+  0
+</span> <br>
+alluminum bits: <span id="alluminumBitsText">
+  0
+</span> <!--tab---> &nbsp;&nbsp;
+alluminum chuncks: <span id="alluminumChuncksText">
+  0
+</span> <br>
+bronze bars: <span id="bronzeBarsText">
+  0
+</span> <br>
+
+<br><!--//buttons-->
+<button onclick="collectSand()" 
+title="get some sand from the beach (sand + 1)">
+  collect sand
+</button> <br>
+<button onclick="siftForWood()" 
+title="sift the sand in search of wood (-2 sand +1 wood)">
+  sift for wood
+</button> <br>
+<button onclick="siftForStone()"
+title="sift the sand in search of stones (-2 sand +1 stone)">
+  sift for stones
+</button> <br>
+<button onclick="siftForCopper()" 
+title="sift the sand in search of copper (-5 sand +1 copper bit) requiers the crude sifter">
+    sift for copper
+</button> <br>
+<button onclick="craftCircuitBoard()" 
+title="you uh, craft a circuit board. (-3 silicon -1 copper bar +1 circuit board)">
+    craft a circuit board
+</button> <br>
+<button onclick="craftCopperWire()" 
+title="use the casting station to make copper wire. (-2 copper bars, +20 copper wire)">
+    cast copper wire
+</button> <br>
+<button onclick="siftForAlluminum()" 
+title="sift the sand in search of alluminum (-10 sand +1 alluminum bit) requiers the granular sifter">
+	sift for alluminum
+</button>
+<br>
+<br><!--//buildings-->
+buildings: <br>
+<button onclick="furnace.build()" 
+title="build a furnace to meld copper bits into chuncks (cost: 10 stone)(10 bits -> 1 chunck)">
+  furnace
+</button>
+<button onclick="furnace.turnOn()" title="turn on an avalible furnace">
+    ^
+</button>
+<button onclick="furnace.turnOff()" title="turn off an avalible furnace">
+    v
+</button> 
+<span id="furnaceAmmmountOnText">0</span>
+<button onclick="furnace.boost()" 
+title="throw 5 wood into the fire (boost multiplyer +1)">
+    boost
+</button>
+<br>
+<button onclick="copperFurnace.build()" 
+title="can turn copper chunks into bars or sand into silicon (cost: 10 stone and 2 copper chuncks)(2 chuncks -> 1 bar)">
+    copper lined furnace
+</button>
+copper bars:
+<button onclick="copperFurnace.turnOnBars()" 
+title="turn on an avalible copper lined furnace and use it to make copper bars ">
+    ^
+</button>
+<button onclick="copperFurnace.turnOffBars()" 
+title="turn off a copper lined furnace that is currently making copper bars">
+    v
+</button> 
+<span id="copperFurnaceAmmmountOnBarsText">0</span> &nbsp;
+ silicon: 
+<button onclick="copperFurnace.turnOnSilicon()" 
+title="turn on an avalible copper lined furnace and use it to make silicon">
+    ^
+</button>
+<button onclick="copperFurnace.turnOffSilicon()" 
+title="turn off a copper lined furnace that is currently making Silicon">
+    v
+</button> 
+<span id="copperFurnaceAmmmountOnSiliconText">0</span> 
+<button onclick="copperFurnace.boost()"
+title="throw 5 wood into the fire (boost multiplyer +1)">
+    boost
+</button> <br>
+<button onclick="AlluFurnace.build()" 
+title="build a fully copper furnace to meld alluminum bits into chuncks (cost: 10 copper bars)(10 bits -> 1 chunck)">
+	copper furnace
+</button>
+<button onclick="AlluFurnace.turnOn()" title="turn on an avalible copper furnace">
+    ^
+</button>
+<button onclick="AlluFurnace.turnOff()" title="turn off an avalible copper furnace">
+    v
+</button> 
+<span id="AlluFurnaceAmmmountOnText">0</span> 
+<button onclick="AlluFurnace.boost()"
+title="throw 5 wood into the fire (boost multiplyer +1)">
+    boost
+</button> <br>
+<button onclick="alloyFurnace.build()" 
+title="build a alloy furnace to fuse alluminum and copper (cost: 12 copper bars, 6 alluminum chuncks, 12 stone)(2 copper chuncks and 1alluminum chunck -> 1 bronze bar)">
+	alloy furnace
+</button>
+<button onclick="alloyFurnace.turnOn()" title="turn on an avalible alloy furnace">
+    ^
+</button>
+<button onclick="alloyFurnace.turnOff()" title="turn off an avalible alloy furnace">
+    v
+</button> 
+<span id="alloyFurnaceAmmmountOnText">0</span> 
+<button onclick="alloyFurnace.boost()"
+title="throw 5 wood into the fire (boost multiplyer +1)">
+    boost
+</button> <br>
+<!--electrical buildings-->
+<button onclick="sandCollector.build()" 
+title="build a sand collector to collect sand for you (cost: 2 circuit boards, 3 copper bars, 10 copper wire)(5🗲 -> 2 sand ps)">
+	sand collector
+</button>
+<button onclick="sandCollector.turnOn()" title="turn on an avalible sand collector">
+    ^
+</button>
+<button onclick="sandCollector.turnOff()" title="turn off an avalible sand collector">
+    v
+</button>
+<span id="sandCollectorAmmmountOnText">0</span> <br>
+<button onclick="autoSifterWood.build()" 
+title="build a automatic wood sifter to sift for wood for you (cost: 2 circuit boards, 3 alluminum chuncks, 30 copper wire)(10🗲 & 2 sand ps -> 1 wood ps)">
+	automatic wood sifter
+</button>
+<button onclick="autoSifterWood.turnOn()" title="turn on an avalible automatic wood sifter">
+    ^
+</button>
+<button onclick="autoSifterWood.turnOff()" title="turn off an avalible automatic wood sifter">
+    v
+</button> 
+<span id="autoSifterWoodAmmmountOnText">0</span> <br>
+<button onclick="autoSifterStone.build()" 
+title="build a automatic stone sifter to sift for wood for you (cost: 2 circuit boards, 3 alluminum chuncks, 30 copper wire)(10🗲 & 2 sand ps -> 1 wood ps)">
+	automatic stone sifter
+</button>
+<button onclick="autoSifterStone.turnOn()" title="turn on an avalible automatic stone sifter">
+    ^
+</button>
+<button onclick="autoSifterStone.turnOff()" title="turn off an avalible automatic stone sifter">
+    v
+</button> 
+<span id="autoSifterStoneAmmmountOnText">0</span>
+<br><br>
+<table>
+    <tbody>
+	<tr>
+        <th>type</th>
+        <th>ammount</th>
+        <th>productivity 1</th>
+        <th>productivity 2</th>
+		<th>consumption  1</th>
+		<th>consumption  2</th>
+        <th>boost multiplyer</th>
+    </tr>
+    <tr>
+        <td>furnace</td>
+        <td><span id="furnaceAmmountText">0</span></td>
+        <td><span id="furnaceProductivityText">0</span> copper Chunck ps</td>
+        <td>NaN lmao</td>
+		<td><span id="furnaceConsumptionText">0</span> copper bits ps</td>
+		<td>NaN lmao</td>
+        <td><span id="furnaceBoostText">1</span>x</td>
+    </tr>
+    <tr>
+        <td>copper lined furnace</td>
+        <td><span id="copperFurnaceAmmountText">0</span></td>
+        <td><span id="copperFurnaceBarsProductivityText">0</span> copper bars ps</td>
+        <td><span id="copperFurnaceSiliconProductivityText">0</span> silicon ps</td>
+		<td><span id="copperFurnaceBarsConsumptionText">0</span> alluminum bits</td>
+		<td><span id="copperFurnaceSiliconConsumptionText">0</span> sand</td>
+        <td><span id="copperFurnaceBoostText">1</span>x</td>
+    </tr>
+	<tr>
+		<td> copper furnace</td>
+        <td><span id="AlluFurnaceAmmountText">0</span></td>
+        <td><span id="AlluFurnaceProductivityText">0</span> alluminum Chunck ps</td>
+        <td>NaN lmao</td>
+		<td><span id="AlluFurnaceConsumptionText">0</span> alluminum bits ps</td>
+		<td>NaN lmao</td>
+        <td><span id="AlluFurnaceBoostText">1</span>x</td>
+	</tr>
+	<tr>
+		<td> alloy furnace</td>
+        <td><span id="alloyFurnaceAmmountText">0</span></td>
+        <td><span id="alloyFurnaceProductivityText">0</span> bronze bar ps</td>
+        <td>NaN lmao</td>
+		<td><span id="alloyFurnaceCopperConsumptionText">0</span> copper chuncks ps</td>
+		<td><span id="alloyFurnaceAlluminumConsumptionText">0</span> alluminum chuncks ps</td>
+        <td><span id="alloyFurnaceBoostText">1</span>x</td>
+	</tr>
+	<tr>
+		<td>sand collector</td>
+		<td><span id="sandCollectorAmmountText">0</span></td>
+		<td><span id="sandCollectorProductivityText">0</span> sand ps</td>
+		<td>NaN lmao</td>
+		<td><span id="sandCollectorConsumptionText">0</span>🗲</td>
+		<td>NaN lmao</td>
+		<td><span id="sandCollectorBoostText">1</span>x</td>
+	</tr>
+	<tr>
+		<td>automatic wood sifter</td>
+		<td><span id="autoSifterWoodAmmountText">0</span></td>
+		<td><span id="autoSifterWoodProductivityText">0</span> wood ps</td>
+		<td>NaN lmao</td>
+		<td><span id="autoSifterWoodConsumptionText">0</span>🗲</td>
+		<td><span id="autoSifterWoodConsumptionText2">0</span> sand ps</td>
+		<td><span id="autoSifterWoodBoostText">1</span>x</td>
+	</tr>
+	<tr>
+		<td>automatic stone sifter</td>
+		<td><span id="autoSifterStoneAmmountText">0</span></td>
+		<td><span id="autoSifterStoneProductivityText">0</span> wood ps</td>
+		<td>NaN lmao</td>
+		<td><span id="autoSifterStoneConsumptionText">0</span>🗲</td>
+		<td><span id="autoSifterStoneConsumptionText2">0</span> sand ps</td>
+		<td><span id="autoSifterStoneBoostText">1</span>x</td>
+	</tr>
+	</tbody>
+</table>
+<br>
+<!--power production-->
+power: <br>
+<button onclick="waterWeel.build()" 
+title="generates power with no restraints (+10🗲) (cost: 10 wood, 15 stone, 1 copper bar)">
+	water weel
+</button> <br>
+<button onclick="bioBurner.build()">
+	bio burner
+</button> 
+<button onclick="bioBurner.turnOn()" title="turn on an avalible bio burner">
+    ^
+</button>
+<button onclick="bioBurner.turnOff()" title="turn off an avalible bio burner">
+    v
+</button> 
+<br>
+power gen: <span id="totalPowerText">0</span>🗲 <br>
+power loss: <span id="powerLossText">0</span>🗲 <br>
+<!--upgrades--><!--temp--><br>
+advancements: <br>
+<button onclick="crudeSifterUpgrade()" 
+title="gives acsess to copper and furnaces (cost: 5 wood)">
+  crude sifter
+</button>
+<br>
+<button onclick="castingStationUpgrade()" 
+title="gives accses to copper wire (cost: 30 stone, 20 silicon)">
+	casting station
+</button> <br>
+<button onclick="granularSifterUpgrade()" 
+title="gives accses to alluminum and alloy furnaces (5 stone, 10 wood, 40 copper wire)">
+	grainular sifter
+</button> <br>
+<button onclick="tempWinState()" title="20 bronze bars, 5 circuit board, 100 copper wire">
+    win lmao (temp)
+</button> <br>
+<p id="winText"> </p>
+<! debug notes: 🗲>
+    </div>
+</body>
