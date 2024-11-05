@@ -1,0 +1,262 @@
+<!DOCTYPE html>
+<head>
+
+<script>
+let coins = 0;
+let coinUpg = 1;
+let coinMiniPrest = 0;
+let coinMedPrest = 0;
+let coinBigPrest = 0;
+let platCoins = 0;
+let platCoinUpg = 1;
+let platMiniPrest = 0;
+let platMedPrest = 0;
+let platBigPrest = 0;
+let platCoinUnlock = false;
+let smallCoinCrush = 1;
+let mediumCoinCrush = 1;
+let MCCOn = 0;
+let bigCoinCrush = 0;
+let BCCOn = 0;
+
+function bigCoin(){
+	let coinUp = (coinUpg + (coinMiniPrest * 10) + (coinMedPrest * 100) + (coinBigPrest * 500)) * (smallCoinCrush + ((mediumCoinCrush * 10) * MCCOn) + (bigCoinCrush * 100) * BCCOn)
+	coins += coinUp
+}
+
+function buyCoinUpgrade(ammount){
+	if (coins >= ammount * 100){
+		coins -= ammount * 100;
+		coinUpg += ammount
+	}
+}
+
+function coinMiniPrestF(){
+	if (coins >= 500){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest += 1
+	}
+}
+function coinMedPrestF(){
+	if (coins >= 5000){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest = 0;
+		coinMedPrest += 1
+	}
+}
+function coinBigPrestF(){
+	if (coins >= 100000){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest = 0;
+		coinMedPrest = 10;
+		coinBigPrest += 1;
+	}
+}
+
+function platCoin(){
+	if (platCoinUnlock == true){
+		let coinUp = 
+			(platCoinUpg + (platMiniPrest * 10) + (platMedPrest * 100) + (platBigPrest * 500) * (smallCoinCrush + ((mediumCoinCrush * 10) * MCCOn) + (bigCoinCrush * 100) * BCCOn))
+	platCoins += coinUp
+	} else if (coins >= 1000000){
+		coins -= 1000000;
+		platCoinUnlock = true
+		document.getElementById("platCoin").innerHTML = "₽";
+		document.getElementById('platCoin').setAttribute('title', 'click to get platinum coins');
+	}
+}
+
+function buyPlatUpgrade(ammount){
+	if (platCoins >= ammount * 100){
+		platCoins -= ammount * 100;
+		platCoinUpg += ammount
+	}
+}
+
+function platMiniPrestF(){
+	if (platCoins >= 500){
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest += 1
+	}
+}
+function platMedPrestF(){
+	if (platCoins >= 5000){
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest = 0;
+		platMedPrest += 1
+	}
+}
+function platBigPrestF(){
+	if (platCoins >= 100000){
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest = 0;
+		platMedPrest = 10;
+		platBigPrest += 1;
+	}
+}
+
+function smallCoinCrushF(){
+	if (coins >= 10000000 && platCoins >= 10000000){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest = 0;
+		coinMedPrest = 0;
+		coinBigPrest = 0;
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest = 0;
+		platMedPrest = 0;
+		platBigPrest = 0;
+		smallCoinCrush += 1;
+	}
+}
+
+function mediumCoinCrushF(){
+	if (coins >= 100000000 && platCoins >= 100000000){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest = 0;
+		coinMedPrest = 0;
+		coinBigPrest = 0;
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest = 0;
+		platMedPrest = 0;
+		platBigPrest = 0;
+		smallCoinCrush = 0;
+		mediumCoinCrush += 1;
+		if (MCCOn == 0){
+			MCCOn = 1
+		}
+	}
+}
+
+function bigCoinCrushF(){
+	if (coins >= 1000000000 && platCoins >= 1000000000){
+		coins = 0;
+		coinUpg = 1;
+		coinMiniPrest = 0;
+		coinMedPrest = 0;
+		coinBigPrest = 0;
+		platCoins = 0;
+		platCoinUpg = 1;
+		platMiniPrest = 0;
+		platMedPrest = 0;
+		platBigPrest = 0;
+		smallCoinCrush = 0;
+		mediumCoinCrush = 0;
+		bigCoinCrush += 1;
+		if (BCCOn == 0){
+			BCCOn = 1;
+		}
+	}
+}
+
+function platCoinLock(){
+	platCoinUnlock = false;
+	document.getElementById("platCoin").innerHTML = "🔒";
+	document.getElementById('platCoin').setAttribute('title', 'cost: 1000000');
+}
+
+setInterval(function (){
+    document.getElementById("coinText").innerHTML = coins;
+	document.getElementById("platCoinText").innerHTML = platCoins;
+}, 5)
+</script>
+
+<style>
+#bigCoin {
+	height: 150px;
+	width: 150px;
+	border-radius: 100%;
+	background-color: #facc00;
+	border: 2px #362b00;
+	font-size: 50px;
+}
+#platCoin {
+	height: 100px;
+	width: 100px;
+	border-radius: 100%;
+	background-color: #9dd5f2;
+	border: 2px #25353d;
+	font-size: 50px;
+}
+button {
+	font-size: 10px;
+}
+</style>
+
+</head>
+
+<body>
+coins: <span id="coinText">0</span> <br>
+platinum coins: <span id="platCoinText">0</span> <br>
+<br>
+<button onclick="bigCoin()" id="bigCoin" title="click to get coins">
+	$
+</button>
+<button onclick="coinMiniPrestF()" title="req: 500 coins">
+	mini prestige
+</button>
+<button onclick="coinMedPrestF()" title="req: 5000 coins">
+	medium prestige
+</button>
+<button onclick="coinBigPrestF()" title="req: 100000 coins">
+	big prestige
+</button>
+<br>
+buy upgrage:
+<button onclick="buyCoinUpgrade(1)" title="cost: 100 coins">
+	x1
+</button>
+<button onclick="buyCoinUpgrade(5)" title="cost: 500 coins">
+	x5
+</button>
+<button onclick="buyCoinUpgrade(10)" title="cost: 1000 coins">
+	x10
+</button>
+<br>
+<button onclick="platCoin()" id="platCoin" title="cost: 1000000">
+	🔒
+</button>
+<button onclick="platMiniPrestF()" title="req: 500 platinum">
+	mini prestige
+</button>
+<button onclick="platMedPrestF()" title="req: 5000 platinum">
+	medium prestige
+</button>
+<button onclick="platBigPrestF()" title="req: 100000 platinum">
+	big prestige
+</button>
+<br>
+buy upgrage:
+<button onclick="buyPlatUpgrade(1)" title="cost: 100 platinum">
+	x1
+</button>
+<button onclick="buyPlatUpgrade(5)" title="cost: 500 platinum">
+	x5
+</button>
+<button onclick="buyPlatUpgrade(10)" title="cost: 1000 platinum">
+	x10
+</button> <br>
+<button onclick="smallCoinCrushF()" 
+title="cost: 10000000 coins 10000000 platinum">
+	small coin crunch
+</button>
+<button onclick="mediumCoinCrushF()" 
+title="cost: 100000000 coins 100000000 platinum">
+	medium coin crunch
+</button>
+<button onclick="bigCoinCrushF()" 
+title="cost: 1000000000 coins 1000000000 platinum">
+	big coin crunch
+</button>
+
+<!random info ₹₽฿>
+</body>
