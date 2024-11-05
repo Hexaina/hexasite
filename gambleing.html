@@ -1,0 +1,242 @@
+<!DOCTYPE html>
+<head>
+<script>
+//variables
+let cash = 100;
+let chips = 0;
+const firstLine = [0, 0, 0];
+const secondLine = [0, 0, 0];
+const thirdLine = [0, 0, 0];
+const symbols = [":(", "-_-", "($)", "|::|", "#", "6"];
+let pay = 15;
+let totalExp = 0;
+let expierence = 0;
+let displayExp = 0;
+let wincon = false;
+//gold
+    let gold = 0;
+    let goldVal = 100;
+    let trackGoldMarket = false;
+    let goldMarketState = 1;
+//end
+//entry text
+console.log ("you step into the cassino, grab your cash and get redy. as you enter you mutter 'lets go gambleing'")
+
+console.log ("you have " + cash + "$")
+//functions
+//spin function
+function spin(bet){
+    
+    let win = 0
+    
+    if (bet <= cash){
+        
+        cash -= bet
+        
+        resetLines()
+        
+        console.log (firstLine)
+        console.log (secondLine)
+        console.log (thirdLine) 
+        
+        if (firstLine[0] == firstLine[1] && firstLine[1] == firstLine[2]){
+            win += firstLine[0]
+        } else if (secondLine[0] == secondLine[1] && secondLine[1] == secondLine[2]){
+            win += secondLine[0]
+        } else if (thirdLine[0] == thirdLine[1] && thirdLine[1] == thirdLine[2]){
+            win += thirdLine[0]
+        } else if (firstLine[0] == secondLine[0] && secondLine[0] == thirdLine[0]){
+            win += firstLine[0]
+        } else if (firstLine[1] == secondLine[1] && secondLine[1] == thirdLine[1]){
+            win += firstLine[1]
+        } else if (firstLine[2] == secondLine[2] && secondLine[2] == thirdLine[2]){
+            win += firstLine[2]
+        } 
+        
+        if (win >= 1){
+            let winnings = bet * win;
+            cash += winnings;
+            chips += winnings;
+            console.log ("you won " + winnings + "$!!!");
+        } else {
+            console.log ("aww dangit")
+        }
+        console.log ("you have " + cash + "$")
+        
+        if (cash == 0){
+            console.log ("'dang...' you have run out of cash. go work if you want to continue")
+        }
+        
+    } else {
+        console.log ("not enough cash")
+    } //end
+}
+//sub functions
+function randomNum(min, max) {
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+function resetLines(){
+    firstLine[0] = randomNum(1,9);
+    firstLine[1] = randomNum(1,9);
+    firstLine[2] = randomNum(1,9);
+    
+    secondLine[0] = randomNum(1,9);
+    secondLine[1] = randomNum(1,9);
+    secondLine[2] = randomNum(1,9);
+    
+    thirdLine[0] = randomNum(1,9);
+    thirdLine[1] = randomNum(1,9);
+    thirdLine[2] = randomNum(1,9);
+}
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+//work function
+function work(hours){
+    console.log ("you deside to work for " + hours + " hours. the pay will be " + pay + "$ an hour")
+    wait(10000 * hours).then(() => {
+        let payHours = pay * hours
+        cash += payHours;
+        console.log("you got out of work, and got payed " + payHours + "$. your pay increassed by " + displayExp + "$. its time to go gambleing once again");
+        expierence += hours
+        
+        if (expierence >= 5){
+            pay += Math.floor(expierence / 5)
+            totalExp += Math.floor(expierence / 5)
+            displayExp += Math.floor(expierence / 5)
+        expierence = 0
+        }
+        if (displayExp >= 5){displayExp = 0;}
+    })
+}
+//gold functions
+function buyGold(num){
+    if (cash >= goldVal * num){
+        let diplayVal = goldVal * num
+        cash -= goldVal * num;
+        gold += num
+        console.log ("you bought " + num + " pounds of gold for " + diplayVal + "$.")
+    } else {
+        console.log ("you are too poor to buy that much gold. you should go gamblel to make that bread")
+    }
+}
+
+function sellGold(num){
+    if (gold >= num){
+        let diplayVal = goldVal * num
+        gold -= num
+        cash += goldVal
+        console.log ("you sold " + num + " pounds of gold and gained " + diplayVal + " cash.")
+    } else {
+        console.log ("you uh... dont have that much gold")
+    }
+}
+
+function buyBigHouse(){
+    if (chips >= 10000){
+        chips -= 10000
+        console.log ("you finaly bought a big house.")
+        wait(100).then(() => {
+            console.log ("wich was your goal btw")
+            wait(5000).then(() => {
+                console.log ("you can leave")
+                wait(1000).then(() => {
+                    console.log ("you can stop gamebling now")
+                    wait(10000).then(() => {
+                        console.log ("go alredy")
+                        wait(5000).then(() => {
+                            console.log ("alright then")
+                            wait(1000).then(() => {
+                                cash = 0
+                                pay = 0
+                                goldVal = 0
+                                gold = 0
+                                chips = 0
+                                wait(100).then(() => {
+                                    console.log ("nothing left huh")
+                                    wait(1500).then(() => {
+                                        console.log ("LEAVE!!!!")
+                                        wincon = true
+                                    })
+                                })
+                            })
+                        })
+                    })
+                })
+            })
+        })
+    }
+}
+
+//updates
+setInterval(function (){
+    let marketTre = "null"
+    if (goldMarketState == 1){
+        marketTre = "rising."
+    } else if (goldMarketState == 2){
+        marketTre = "stable."
+    } else if (goldMarketState == 3){
+        marketTre = "lowering."
+    } else {
+        console.log ("gold market error")
+    }
+    if (goldMarketState == 1){
+        goldVal += randomNum(-5,20)
+    } else if (goldMarketState == 2){
+        goldVal += randomNum(-10,10)
+    } else if (goldMarketState == 3){
+        goldVal += randomNum(-20,5)
+    } else {
+        console.log ("gold market error")
+    }
+    if (trackGoldMarket == true){
+        console.log ("current gold prices are " + goldVal + "$ per pound. The price is " + marketTre)
+    }
+}, 5000)
+
+setInterval(function (){
+    goldMarketState = randomNum(1,3)
+}, 60000)
+
+setInterval(function (){
+    document.getElementById("chipsText").innerHTML = chips;
+    if(goldVal <= 0){
+        goldVal = 100
+        console.log ("gold market has reset")
+    }
+}, 10)
+
+//info functions
+function help(){
+    console.log ("commands: spin(bet) gamble! work(hours) work to get monney for gambleing. hours are in tens of seconds, you will have to wait for your pay. for gold market info type goldMarketInfo(). type help2() for more info")
+}
+
+function help2(){
+    console.log ("you get chips evry time you win at the slot machine equal to the cash you get.")
+}
+
+function help6(){
+    console.log ("you can easly cheat by using cash = number to give you a lot of cash. you can do this with anything rilly. when you buy the big house... type lmao() for a specail suprise")
+}
+
+function goldMarketInfo(){
+    console.log ("to check the current price of gold, type goldVal. to buy gold, type buyGold(ammount). to sell gold, type sellGold(ammount). to get constant updates on the market, type trackGoldMarket = true")
+}
+
+function lmao(){
+    if (wincon == true){
+        console.log ("you win lmao")
+    } else if (wincon == false){
+        console.log ("what you laghin at???")
+    }
+}
+
+</script>
+</head>
+<body>
+    <p title="right click on the page and click inspect, then click console to get started. for more information, type help()">hover over for info</p>
+
+    <p>buy stuff with chips</p>
+    <span id="chipsText">0</span> <br><br>
+    <button onclick="buyBigHouse()">giant house</button>
+</body>
