@@ -1,6 +1,71 @@
+<!DOCTYPE html>
+<head>
+<script>
+let hexes = 0;
+
+function hexclick(){
+  hexes++
+}
+
+setInterval(function(){
+  document.getElementById("hexesText").innerHTML = hexes;
+}, 6)
+</script>
+
+<style>
+body {
+  background-color: #41024A;
+  color: #F722E4;
+}
+a {
+  color: #0074FF;
+}
+h1 {
+  color: #AA00FF;
+}
+small {
+  color: #FFC5FC;
+}
+button {
+  background-color: #C157FF;
+  color: #942395;
+  border-color: #FC36FF;
+  border-style: solid;
+  border-radius: 6px;
+}
+button:active {
+  border-color: #AA48AD;
+}
+td {
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Games!</h1>
+<a href="index.html">BACK</a>
 <p>
   <h2>Gambleing!</h2>
   a console game about gambleing (its also quite buggy but i like it that way)<br>
   <a href="https://github.com/Hexaina/hexasite/blob/cdbff5646a6d42b7e9c3b90a132e5dd1e7a71433/gambleing.html">Download</a><br>
   <a href="gambleing.html">Play In Browser</a>
 </p>
+<p>
+  <h2>Ultra Coin Clicker</h2>
+  an extremely small game made to get rid of burnout. also an excuse to revive some game machanics long lost.<br>
+  <a href="https://github.com/Hexaina/hexasite/blob/main/ultra%20coin%20clicker%20v1.1.html">Download</a><br>
+  <a href="ultra coin clicker v1.1.html">Play In Browser</a>
+</p>
+
+<p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
+<!random info: >
+</body>
