@@ -1,0 +1,90 @@
+<!DOCTYPE html>
+<head>
+<script>
+let hexes = 0;
+
+function hexclick(){
+  hexes++
+}
+
+setInterval(function(){
+  document.getElementById("hexesText").innerHTML = hexes;
+}, 6)
+</script>
+
+<style>
+body {
+  background-color: #41024A;
+  color: #F722E4;
+}
+a {
+  color: #0074FF;
+}
+h1 {
+  color: #AA00FF;
+}
+small {
+  color: #FFC5FC;
+}
+button {
+  background-color: #C157FF;
+  color: #942395;
+  border-color: #FC36FF;
+  border-style: solid;
+  border-radius: 6px;
+}
+button:active {
+  border-color: #AA48AD;
+}
+bold {
+  color: #EC2CFF
+}
+td {
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Game Ideas</h1>
+<a href="index.html">BACK</a>
+<p>
+<h2>unnamed tower defence gatcha game</h2>
+<small>not well formated</small><br>
+
+a tower defense game with element/damage type system were you play stages that can go infinitely. the game would have an abstract technology theme. the map is hex based<br>
+<br>
+by playing you can get chips and crystals. you get chips by killing enemies, and you get crystals from wave milestones that increase exponentially every milestone and the base amount is based on the difficulty of the level.<br>
+<br>
+to progress to the next level you must hit a wave milestone (10 after witch, waves the crystal gain will start). <br>
+<br>
+there are five tiles, path tiles, tower tiles, water tiles, air tiles, and void towers.<br>
+path tiles have the enemies, melee towers, wall towers, and allies (small maybe stackable spawned towers witch are spawned from towers.) <br>
+tower tiles are common and have turret, passive, and spawner towers.<br>
+water tiles are quite rare and have gun, passive, and spawner boats.<br>
+air tiles are only on the outside of the map and have gun, passive, and fleet ships.<br>
+void tiles cannot be placed on and are the default tile, you can only place entities on them, very powerful towers you can only have one of.<br>
+<br>
+towers cannot move unless they are the mech type. ships can generally move. boats can generally move, but generally not as much as ships.<br>
+<br>
+you can use crystals to pull new towers with basic rarity systems and such. replicas will allow you to evolve towers increasing their stats and possibly adding activated abilities.<br>
+<br>
+there is the normal star rating system. rarity can range from one star to five star and entities would technically be 6*. the rarities would also be related to the complexity of the base towers.<br>
+</p>
+<p>
+<h3>Rules for use</h3>
+<li>you can use the ideas for any game</li>
+<li>you can NOT profit off of a direct gameplay coppy of these ideas</li>
+<li>if you use these ideas for a public game, please credit me</li>
+</p>
+<p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
+<!random info: >
+</body>
