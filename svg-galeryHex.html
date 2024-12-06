@@ -59,7 +59,7 @@ table, th, td {
 
   <svg 
   viewBox="0 0 22 22"
-  height="300">
+  height="500">
 
     <defs>
 
@@ -109,7 +109,7 @@ table, th, td {
 <p>
   i made a hexagon :0<br>
 
-  <svg viewBox="0 0 30 30" height="500">
+  <svg viewBox="0 0 30 32" height="500">
 
     <defs>
   
@@ -156,6 +156,46 @@ table, th, td {
     />
   
   </svg>
+</p>
+
+<p>
+
+  i dont exactly know what this is but i made glow :0<br>
+
+  <svg viewbox="0 0 16 12"
+  height="500">
+  
+  <defs>
+
+    <radialGradient id="pinkCircleGlow">
+      <stop offset="0%" stop-color="#FF3FFE" stop-opacity="0.7"/>
+      <stop offset="100%" stop-color="white" stop-opacity="0"/>
+    </radialGradient>
+
+  </defs>
+
+  <polygon 
+    points="2,6 8,3 14,6 8,9"
+    stroke="#870021"
+    stroke-width="1"
+    fill="#FF275C"
+  />
+
+  <circle 
+    cx="8"
+    cy="6"
+    r="1"
+    fill="#C70104"
+  />
+
+  <circle 
+    cx="8"
+    cy="6"
+    r="6"
+    fill="url(#pinkCircleGlow)"
+  />
+
+</svg>
 </p>
 
 <p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
