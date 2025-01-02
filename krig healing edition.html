@@ -1,0 +1,606 @@
+<!DOCTYPE html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Krig</title>
+<script>
+
+let turn = 1;
+
+player1 = {
+  //state
+  hp: 20,
+  block: 0,
+  blocking: false,
+  charging: 0,
+
+  attack: function(){
+    //if it is player1's turn
+    if (turn == 1){
+      //roll dice
+      let atk = randomNum(1,6);
+      let spd = randomNum(1,10);
+      //miss, 1 = normal hit, 2 = crit, 0 = complete miss
+      let miss = 1;
+      let parry = 0
+      if (atk <= 4 && player2.charging != 2){
+        if (confirm(`would p2 like to attempt to parry? attack rolled ${atk}`) == true){
+          parry = randomNum(1,4);
+        }
+      }
+
+
+      if (parry >= atk){
+        document.getElementById("resultsText").innerHTML = "p2 sucsessfull parry!!!";
+        console.log("p2 sucsessfull parry!!!");
+        this.turnEnd()
+        return;
+      }
+
+      if (spd == 1){
+        //if roll miss
+        //tracks the miss
+        miss = 0;
+        //no dmg is done
+      } else if (spd == 10){
+        //if roll 10 (crit)
+        //tracks the crit
+        miss = 2;
+        //does true dmg
+        player2.hp -= atk;
+
+      } else {
+        //if normal hit
+        if (player2.blocking == true){
+          //if p2 is blocking
+          //find the difference between p2 block and atk
+          let result = player2.block - atk;
+          
+          if (player2.block < atk){
+            //if result is less then 0 (is negitive)(atk is more than p2 block)
+            //find how much dmg to do to p2 hp
+            let throughDmg = Math.abs(result)
+            //damage p2 hp 
+            player2.hp -= throughDmg;
+            //destroy p2 block
+            player2.stopBlock();
+          } else if (player2.block > atk){
+            //if result is more then or equal to 0 (is positive or 0)(atk is less than or equal to p2 block)
+            //do damage to p2 block
+            player2.block -= atk;
+          } else if (player2.block = atk){
+            player2.stopBlock()
+          }
+        } else if (player2.blocking == false){
+          //if p2 is not blocking
+          //do damage equal to the roll
+          player2.hp -= atk;
+        }
+      }
+
+      //display
+      if (miss == 0){
+        //display in roll results "miss!"
+        document.getElementById("resultsText").innerHTML = "miss!";
+      } else if (miss == 2){
+        //display in roll results "CRIT! dmg: ${atk}"
+        document.getElementById("resultsText").innerHTML = `CRIT! dmg: ${atk}`;
+      } else {
+        //display in roll results "hit! dmg: ${atk}"
+        document.getElementById("resultsText").innerHTML = `hit! dmg: ${atk}`;
+      }
+      document.getElementById("p2HpText").innerHTML = player2.hp;
+      console.log(player2.hp)
+      document.getElementById("p2BlockText").innerHTML = player2.block;
+      console.log(player2.block)
+
+      if (parry == 0){
+        console.log("preparing to end turn")
+        this.turnEnd()
+        console.log("turn has ended")
+      }
+      
+    }
+  },
+//--------------------------------------
+
+  chargeAttack: {
+
+    ready: function(){
+      if (turn == 1){
+        player1.charging = 1;
+        console.log(`p1 ready charging-> ${player2.charging}`)
+        document.getElementById("resultsText").innerHTML = "charging up a big attack!";
+        player1.turnEnd()
+      }
+    },
+
+    execute: function(){
+      //roll dice
+      let atk6 = randomNum(1,6)
+      let atk8 = randomNum(1,8)
+      let atk = atk6 + atk8;
+      let spd = randomNum(1,10)
+      //miss, 1 = normal hit, 2 = crit, 0 = complete miss
+      let miss = 1;
+
+      if (spd == 1){
+        //if roll miss
+        //tracks the miss
+        miss = 0;
+        //no dmg is done
+      } else if (spd == 10){
+        //if roll 10 (crit)
+        //tracks the crit
+        miss = 2;
+        //does true dmg
+        player2.hp -= atk;
+
+      } else {
+        //if normal hit
+        if (player2.blocking == true){
+          //if p2 is blocking
+          //find the difference between p2 block and atk
+          let result = player2.block - atk;
+          
+          if (result < 0){
+            //if result is less then 0 (is negitive)(atk is more than p2 block)
+            //find how much dmg to do to p2 hp
+            let throughDmg = Math.abs(result)
+            //destroy p2 block
+            player2.stopBlock();
+            //damage p2 hp 
+            player2.hp -= throughDmg;
+          } else if (result >= 0){
+            //if result is more then or equal to 0 (is positive or 0)(atk is less than or equal to p2 block)
+            //do damage to p2 block
+            player2.block -= atk;
+            //if no p2 block is left, stop p2 block
+            if (player2.block == 0){
+              player2.stopBlock()
+            }
+          }
+        } else if (player2.blocking == false){
+          //if p2 is not blocking
+          //do damage equal to the roll
+          player2.hp -= atk;
+        }
+      }
+
+      //display
+      if (miss == 0){
+        //display in roll results "miss!"
+        document.getElementById("resultsText").innerHTML = "miss!";
+      } else if (miss == 2){
+        //display in roll results "CRIT! dmg: ${atk}"
+        document.getElementById("resultsText").innerHTML = `CRIT! dmg: ${atk}`;
+      } else {
+        //display in roll results "hit! dmg: ${atk}"
+        document.getElementById("resultsText").innerHTML = `hit! dmg: ${atk}`;
+      }
+      document.getElementById("p2HpText").innerHTML = player2.hp;
+      document.getElementById("p2BlockText").innerHTML = player2.block;
+
+      player2.turnEnd()
+    },
+  },
+
+  defend: function(){
+    if (turn == 1){
+      if (this.blocking == false){
+        let roll = randomNum(1,8);
+        this.block = roll;
+        this.blocking = true;
+        document.getElementById("p1BlockText").innerHTML = player1.block;
+        document.getElementById("p1BlockingText").innerHTML = "✓";
+        document.getElementById("resultsText").innerHTML = `defended for ${roll}`;
+        this.turnEnd()
+      }
+    }
+  },
+
+  heal: function(){
+    if (turn == 1 && this.hp < 10){
+      let roll = randomNum(1,4);
+      this.hp += roll;
+
+      if (this.hp > 10){
+        this.hp = 10;
+        document.getElementById("resultsText").innerHTML = `healed up to 10`;
+        document.getElementById("p1HpText").innerHTML = player2.hp;
+      } else {
+        document.getElementById("p1HpText").innerHTML = player2.hp;
+        document.getElementById("resultsText").innerHTML = `healed ${roll} damage!`;
+      }
+      this.turnEnd()
+    }
+  },
+
+  stopBlock: function(){
+    this.block = 0;
+    this.blocking = false;
+    document.getElementById("p1BlockingText").innerHTML = "X";
+  },
+
+  turnEnd: function(){
+    //p1
+    if (player1.charging == 1){
+      player1.charging = 2;
+      console.log(`p1 ready detected buy p1 turnEnd charging -> ${player1.charging}`)
+    }
+    turnSwitch()
+    if (player2.charging == 2){
+      console.log(`p2 charging detected by p1 turnEnd charging -> ${player2.charging}`)
+      player2.charging = 0;
+      console.log(`p2 charging changed by p1 turnEnd charging -> ${player2.charging}`)
+      player2.chargeAttack.execute()
+      console.log(`p2 charge attack executed charging -> ${player2.charging}`)
+    }
+
+  },
+}
+
+player2 = {
+
+  hp: 20,
+  block: 0,
+  blocking: false,
+  charging: 0,
+
+  attack: function(){
+    //if it is player2's turn
+    if (turn == 2){
+      //roll dice
+      let atk = randomNum(1,6);
+      let spd = randomNum(1,10);
+      //miss, 1 = normal hit, 2 = crit, 0 = complete miss
+      let miss = 1;
+      let parry = 0
+      if (atk <= 4 && player1.charging != 2){
+        if (confirm(`would p1 like to attempt to parry? attack rolled ${atk}`) == true){
+          parry = randomNum(1,4);
+        }
+      }
+
+
+      if (parry >= atk){
+        document.getElementById("resultsText").innerHTML = "p1 sucsessfull parry!!!";
+        console.log("p1 sucsessfull parry!!!");
+        this.turnEnd()
+        return;
+      }
+
+      if (spd == 1){
+        //if roll miss
+        //tracks the miss
+        miss = 0;
+        //no dmg is done
+      } else if (spd == 10){
+        //if roll 10 (crit)
+        //tracks the crit
+        miss = 2;
+        //does true dmg
+        player1.hp -= atk;
+
+      } else {
+        //if normal hit
+        if (player1.blocking == true){
+          //if p1 is blocking
+          //find the difference between p1 block and atk
+          let result = player1.block - atk;
+          
+          if (result < 0){
+            //if result is less then 0 (is negitive)(atk is more than p2 block)
+            //find how much dmg to do to p2 hp
+            let throughDmg = Math.abs(result)
+            //destroy p1 block
+            player1.stopBlock();
+            //damage p1 hp 
+            player1.hp -= throughDmg;
+          } else if (result >= 0){
+            //if result is more then or equal to 0 (is positive or 0)(atk is less than or equal to p2 block)
+            //do damage to p1 block
+            player1.block -= atk;
+            //if no p1 block is left, stop p1 block
+            if (player1.block == 0){
+              player1.stopBlock()
+            }
+          }
+        } else if (player1.blocking == false){
+          //if p1 is not blocking
+          //do damage equal to the roll
+          player1.hp -= atk;
+        }
+      }
+
+      //display
+      if (miss == 0){
+        //display in roll results "miss!"
+        document.getElementById("results2Text").innerHTML = "miss!";
+      } else if (miss == 2){
+        //display in roll results "CRIT! dmg: ${atk}"
+        document.getElementById("results2Text").innerHTML = `CRIT! dmg: ${atk}`;
+      } else {
+        //display in roll results "hit! dmg: ${atk}"
+        document.getElementById("results2Text").innerHTML = `hit! dmg: ${atk}`;
+      }
+      document.getElementById("p1HpText").innerHTML = player1.hp;
+      document.getElementById("p1BlockText").innerHTML = player1.block;
+
+      if (parry == 0){
+        console.log("preparing to end turn")
+        this.turnEnd()
+        console.log("turn has ended")
+      }
+
+    }
+  },
+//--------------------------------------
+
+  chargeAttack: {
+
+    ready: function(){
+      if (turn == 2){
+        player2.charging = 1;
+        console.log(`p2 ready charging-> ${player2.charging}`)
+        document.getElementById("results2Text").innerHTML = "charging up a big attack!";
+        player2.turnEnd()
+      }
+    },
+
+    execute: function(){
+      console.log(`p2 charge attack start executing`)
+      //roll dice
+      let atk6 = randomNum(1,6)
+      let atk8 = randomNum(1,8)
+      let atk = atk6 + atk8;
+      let spd = randomNum(1,10)
+      //miss, 1 = normal hit, 2 = crit, 0 = complete miss
+      let miss = 1;
+
+      if (spd == 1){
+        //if roll miss
+        //tracks the miss
+        miss = 0;
+        //no dmg is done
+      } else if (spd == 10){
+        //if roll 10 (crit)
+        //tracks the crit
+        miss = 2;
+        //does true dmg
+        player1.hp -= atk;
+
+      } else {
+        //if normal hit
+        if (player1.blocking == true){
+          //if p1 is blocking
+          //find the difference between p1 block and atk
+          let result = player1.block - atk;
+          
+          if (result < 0){
+            //if result is less then 0 (is negitive)(atk is more than p2 block)
+            //find how much dmg to do to p2 hp
+            let throughDmg = Math.abs(result)
+            //destroy p1 block
+            player1.stopBlock();
+            //damage p1 hp 
+            player1.hp -= throughDmg;
+          } else if (result >= 0){
+            //if result is more then or equal to 0 (is positive or 0)(atk is less than or equal to p2 block)
+            //do damage to p1 block
+            player1.block -= atk;
+            //if no p1 block is left, stop p1 block
+            if (player1.block == 0){
+              player1.stopBlock()
+            }
+          }
+        } else if (player1.blocking == false){
+          //if p1 is not blocking
+          //do damage equal to the roll
+          player1.hp -= atk;
+        }
+      }
+
+      //display
+      if (miss == 0){
+        //display in roll results "miss!"
+        document.getElementById("results2Text").innerHTML = "miss!";
+      } else if (miss == 2){
+        //display in roll results "CRIT! dmg: ${atk}"
+        document.getElementById("results2Text").innerHTML = `CRIT! dmg: ${atk}`;
+      } else {
+        //display in roll results "hit! dmg: ${atk}"
+        document.getElementById("results2Text").innerHTML = `hit! dmg: ${atk}`;
+      }
+      document.getElementById("p1HpText").innerHTML = player2.hp;
+      document.getElementById("p1BlockText").innerHTML = player2.block;
+
+      player2.turnEnd()
+    },
+  },
+
+  defend: function(){
+    if (turn == 2){
+      if (this.blocking == false){
+        let roll = randomNum(1,8);
+        this.block = roll;
+        this.blocking = true;
+        document.getElementById("p2BlockText").innerHTML = player2.block;
+        document.getElementById("p2BlockingText").innerHTML = "✓";
+        document.getElementById("results2Text").innerHTML = `defended for ${roll}`;
+        this.turnEnd()
+      }
+    }
+  },
+
+  heal: function(){
+    if (turn == 2 && this.hp < 10){
+      let roll = randomNum(1,4);
+      this.hp += roll;
+
+      if (this.hp > 10){
+        this.hp = 10;
+        document.getElementById("results2Text").innerHTML = `healed up to 10`;
+        document.getElementById("p2HpText").innerHTML = player2.hp;
+      } else {
+        document.getElementById("p2HpText").innerHTML = player2.hp;
+        document.getElementById("results2Text").innerHTML = `healed ${roll} damage!`;
+      }
+      this.turnEnd()
+    }
+  },
+
+  stopBlock: function(){
+    this.block = 0;
+    this.blocking = false;
+    document.getElementById("p2BlockingText").innerHTML = "X";
+  },
+
+  turnEnd: function(){
+
+    if (player2.charging == 1){
+      console.log(`p2 ready detected by p2 turnEnd charging -> ${player2.charging}`)
+      player2.charging = 2;
+      console.log(`p2 charging changed by p2 turnEnd charging -> ${player2.charging}`)
+    }
+    turnSwitch()
+    if (player1.charging == 2){
+      console.log(`p1 charging detected by p2 turnEnd charging -> ${player1.charging}`)
+      player1.charging = 0;
+      console.log(`p1 charging changed by p2 turnEnd charging -> ${player1.charging}`)
+      player1.chargeAttack.execute()
+      console.log(`p2 charging executed by p2 turnEnd charging -> ${player1.charging}`)
+    }
+    
+  },
+
+}
+
+function turnSwitch(){
+  if (turn == 1){
+    turn = 2
+    document.getElementById("turnText").innerHTML = turn;
+  } else if (turn == 2){
+    turn = 1
+    document.getElementById("turnText").innerHTML = turn;
+  }
+  checkWin()
+}
+
+function checkWin(){
+
+  if (player1.hp <= 0){
+    resetGame()
+    turn = 2
+    document.getElementById("resultsText").innerHTML = "you lose...";
+    document.getElementById("results2Text").innerHTML = "you WIN!!!!!!";
+  } else if (player2.hp <= 0){
+    resetGame()
+    turn = 1
+    document.getElementById("resultsText").innerHTML = "you WIN!!!!!!";
+    document.getElementById("results2Text").innerHTML = "you lose...";
+  }
+  document.getElementById("turnText").innerHTML = turn;
+}
+
+function resetGame(){
+  player1.hp = 20,
+  player1.block = 0,
+  player1.blocking = false,
+  player1.charging = 0,
+
+  player2.hp = 20,
+  player2.block = 0,
+  player2.blocking = false,
+  player2.charging = 0,
+  turn = 1
+
+  document.getElementById("turnText").innerHTML = turn;
+  document.getElementById("p1BlockText").innerHTML = player1.block;
+  document.getElementById("p1BlockingText").innerHTML = "X";
+  document.getElementById("p1HpText").innerHTML = player1.hp;
+  document.getElementById("p2BlockText").innerHTML = player2.block;
+  document.getElementById("p2BlockingText").innerHTML = "X";
+  document.getElementById("p2HpText").innerHTML = player2.hp;
+}
+
+function randomNum(min, max) {
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+function wait(ms) {
+  return new Promise(resolve => setTimeout(resolve, ms));
+}
+
+</script>
+
+<style>
+
+  body {
+    background-color: black;
+    color: white;
+  }
+  .p1 {
+    color: lime;
+  }
+  .p1b {
+    background-color: lime; /* Green */
+    border-style: outset;
+    border-radius: 5px;
+    border-color: limegreen;
+    color: white;
+    padding: 10px 12px;
+  }
+  .p2 {
+    color: orange;
+  }
+  .p2b{
+    background-color: orange; /* Green */
+    border-style: outset;
+    border-radius: 5px;
+    border-color: darkorange;
+    color: white;
+    padding: 10px 12px;
+  }
+
+</style>
+
+</head>
+
+<body>
+
+Turn: <span id="turnText">1</span><br>
+<div class="p1">
+<h2>P1</h2>
+<button class="p1b" onclick="player1.chargeAttack.ready()">charge</button>
+<button class="p1b" onclick="player1.attack()">attack</button>
+<button class="p1b" onclick="player1.defend()">defend</button>
+<button class="p1b" onclick="player1.heal()">heal</button>
+<br>
+<span style="text-align: right;">
+defence: <span id="p1BlockText">0</span>
+<span id="p1BlockingText">X</span>
+HP: <span id="p1HpText">20</span>
+</span><br>
+</div>
+<br>
+results 1: <span id="resultsText">waiting...</span><br>
+results 2: <span id="results2Text">waiting...</span><br>
+<br>
+<div class="p2">
+<span style="text-align: right;">
+defence: <span id="p2BlockText">0</span>
+<span id="p2BlockingText">X</span>
+HP: <span id="p2HpText">20</span>
+</span><br>
+<br>
+<button class="p2b" onclick="player2.chargeAttack.ready()">charge</button>
+<button class="p2b" onclick="player2.attack()">attack</button>
+<button class="p2b" onclick="player2.defend()">defend</button>
+<button class="p2b" onclick="player2.heal()">heal</button>
+<h2>P2</h2>
+</div>
+
+
+<!--random info -->
+</body>
