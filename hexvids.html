@@ -1,0 +1,81 @@
+<!DOCTYPE html>
+<head>
+<script>
+let hexes = 0;
+
+function hexclick(){
+  hexes++
+}
+
+setInterval(function(){
+  document.getElementById("hexesText").innerHTML = hexes;
+}, 6)
+</script>
+
+<style>
+body {
+  background-color: #41024A;
+  color: #F722E4;
+}
+a {
+  color: #0074FF;
+}
+h1 {
+  color: #AA00FF;
+}
+small {
+  color: #FFC5FC;
+}
+button {
+  background-color: #C157FF;
+  color: #942395;
+  border-color: #FC36FF;
+  border-style: solid;
+  border-radius: 6px;
+}
+button:active {
+  border-color: #AA48AD;
+}
+td {
+  text-align: center;
+}
+th {
+  text-align: center;
+}
+table, th, td {
+  border: 1px solid black;
+  border-collapse: collapse;
+}
+</style>
+
+</head>
+
+<body>
+<h1>Videos</h1>
+<a href="https://hexaina.github.io/hexasite/">BACK</a><br>
+
+<p>
+this is a small animation that i made. i did not include this in the youtube video because <bold style="color: red">!!!THIS IS VERY FLASHY. DO NOT WATCH IF YOU DO NOT WANT YOUR EYES BLASTED!!!</bold>
+<br>
+<video controls width="640" height="360">
+  
+  <source src="sara.mp4" type="video/mp4" />
+  
+  your browser does not suport video
+</video>
+</p>
+
+<p>
+this is a compalation of my first few animations. this was edited and posted on youtube. it does not include one, that should be right above this one
+<br>
+<video controls width="640" height="360">
+
+  <source src="animations1.mp4" type="video/mp4" />
+
+  your browser does not suport video
+</video>
+</p>
+
+<p><small>hex clicker! hexes: <span id="hexesText">0</span> <button onclick="hexclick()">⬢</button></small></p>
+<!random info: >
+</body>
